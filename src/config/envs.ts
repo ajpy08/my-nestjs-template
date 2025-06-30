@@ -1,43 +1,41 @@
 import { Logger } from '@nestjs/common';
-import * as joi from 'joi';
+import { plainToClass } from 'class-transformer';
+import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
 import { NODE_ENV } from '../common/enums';
 import { ZERO } from '../common/helpers';
 
-interface EnvVars {
+class EnvironmentVariables {
+  @IsNumber()
   PORT: number;
+
+  @IsString()
+  @IsEnum(NODE_ENV)
   NODE_ENV: string;
 }
 
-const envsSchema = joi
-  .object({
-    PORT: joi.number().required(),
-    NODE_ENV: joi
-      .string()
-      .valid(
-        NODE_ENV.DEVELOP,
-        NODE_ENV.QA,
-        NODE_ENV.PROD,
-        NODE_ENV.TEST,
-      )
-      .required(),
-  })
-  .unknown(true);
-
-let envVars: EnvVars = {
+let envVars: EnvironmentVariables = {
   PORT: ZERO,
   NODE_ENV: 'test',
 };
 
 if (process.env.NODE_ENV !== NODE_ENV.TEST) {
-  const { error, value } = envsSchema.validate(process.env);
+  const validatedConfig = plainToClass(EnvironmentVariables, process.env, {
+    enableImplicitConversion: true,
+  });
 
-  if (error) {
-    const message = `Config validation error (envs): ${error.message}`;
+  const errors = validateSync(validatedConfig, {
+    skipMissingProperties: false,
+  });
+
+  if (errors.length) {
+    const message = `Config validation error (envs): ${errors
+      .map((error) => Object.values(error.constraints ?? {}).join(', '))
+      .join('; ')}`;
     Logger.error(message);
     throw new Error(message);
   }
 
-  envVars = value;
+  envVars = validatedConfig;
 }
 
 export const envs = {

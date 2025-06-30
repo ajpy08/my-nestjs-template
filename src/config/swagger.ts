@@ -18,7 +18,7 @@ const swaggerOptions: SwaggerCustomOptions = {
   },
 };
 
-export async function initSwagger(
+export function initSwagger(
   app: INestApplication,
   configService: ConfigService,
 ) {

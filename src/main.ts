@@ -20,10 +20,13 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  await initSwagger(app, configService);
+  initSwagger(app, configService);
 
   await app
-  .listen(envs.port)
-  .then(() => logger.debug(`Server running on port ${envs.port}`));
+    .listen(envs.port)
+    .then(() => logger.debug(`Server running on port ${envs.port}`));
 }
-bootstrap();
+bootstrap().catch((error) => {
+  Logger.error('Failed to start application:', error);
+  process.exit(1);
+});
