@@ -1,6 +1,7 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { Public } from './decorators';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CommonService } from './common.service';
+import { Public } from './decorators';
 import { HealthResponseDto } from './dto';
 
 @Controller({
@@ -8,6 +9,8 @@ import { HealthResponseDto } from './dto';
   version: '1',
 })
 export class CommonController {
+  constructor(private readonly commonService: CommonService) {}
+
   @Public()
   @Get('health')
   @ApiOperation({ summary: 'Endpoint for health check' })
@@ -16,9 +19,6 @@ export class CommonController {
     type: HealthResponseDto,
   })
   health(): HealthResponseDto {
-    return {
-      message: 'OK',
-      timestamp: new Date(Date.now()),
-    };
+    return this.commonService.health();
   }
 }

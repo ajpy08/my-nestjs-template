@@ -4,7 +4,7 @@ import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
 import { NODE_ENV } from '../common/enums';
 import { ZERO } from '../common/helpers';
 
-class EnvironmentVariables {
+class EnvironmentVariablesDto {
   @IsNumber()
   PORT: number;
 
@@ -13,13 +13,13 @@ class EnvironmentVariables {
   NODE_ENV: string;
 }
 
-let envVars: EnvironmentVariables = {
+let envVars: EnvironmentVariablesDto = {
   PORT: ZERO,
   NODE_ENV: 'test',
 };
 
 if (process.env.NODE_ENV !== NODE_ENV.TEST) {
-  const validatedConfig = plainToClass(EnvironmentVariables, process.env, {
+  const validatedConfig = plainToClass(EnvironmentVariablesDto, process.env, {
     enableImplicitConversion: true,
   });
 

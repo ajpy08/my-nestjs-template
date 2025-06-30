@@ -6,4 +6,9 @@ export class HealthResponseDto {
 
   @ApiProperty({ example: '1721432532428' })
   timestamp: Date;
+
+  constructor(data: HealthResponseDto) {
+    this.message = data.message;
+    this.timestamp = data.timestamp;
+  }
 }
