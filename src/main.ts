@@ -3,10 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { API_PREFIX } from './common/helpers';
-import { envs, getVersion, initSwagger } from './config';
+import {
+  createDatabaseIfNotExists,
+  envs,
+  getVersion,
+  initSwagger,
+} from './config';
 
 async function bootstrap() {
-  const logger = new Logger('Main template');
+  await createDatabaseIfNotExists();
+  const logger = new Logger(`Main ${process.env.NODE_ENV}`);
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);

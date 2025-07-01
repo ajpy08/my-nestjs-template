@@ -26,7 +26,7 @@ export function initSwagger(
     .setTitle(
       `${PROJECT_NAME.replaceAll('-', ' ').toUpperCase()} (${envs.nodeEnv.toUpperCase()})`,
     )
-    .setDescription('Template By Javier Puc')
+    .setDescription(`${PROJECT_NAME} By Javier Puc`)
     .setContact('Support', '', 'angelpuc08@gmail.com')
     .setLicense('ISC', 'https://github.com/ajpy08')
     .setVersion(configService.get('npm_package_version') ?? '1.0.0')
