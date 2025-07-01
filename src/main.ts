@@ -1,6 +1,7 @@
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { API_PREFIX } from './common/helpers';
 import {
@@ -17,9 +18,18 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
+  app.use(helmet());
   app.enableCors();
 
   getVersion();
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   app.setGlobalPrefix(API_PREFIX);
   app.enableVersioning({
