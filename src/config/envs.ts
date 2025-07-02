@@ -7,8 +7,12 @@ import {
   IsString,
   validateSync,
 } from 'class-validator';
+import dotenv from 'dotenv';
 import { NODE_ENV } from '../common/enums';
 import { ZERO } from '../common/helpers';
+
+// Cargar variables de entorno al inicio
+dotenv.config();
 
 class EnvironmentVariablesDto {
   @IsNumber()
@@ -36,6 +40,14 @@ class EnvironmentVariablesDto {
   @IsString()
   @IsOptional()
   POSTGRES_LOG: string;
+
+  @IsString()
+  @IsOptional()
+  SONAR_HOST: string;
+
+  @IsString()
+  @IsOptional()
+  SONAR_TOKEN: string;
 }
 
 let envVars: EnvironmentVariablesDto = {
@@ -47,9 +59,11 @@ let envVars: EnvironmentVariablesDto = {
   POSTGRES_PASSWORD: 'postgres',
   POSTGRES_DATABASE: 'postgres',
   POSTGRES_LOG: 'false',
+  SONAR_HOST: 'http://localhost:9000',
+  SONAR_TOKEN: 'sonar-token',
 };
 
-if (process.env.NODE_ENV !== NODE_ENV.TEST) {
+if ((process.env.NODE_ENV as NODE_ENV) !== NODE_ENV.TEST) {
   const validatedConfig = plainToClass(EnvironmentVariablesDto, process.env, {
     enableImplicitConversion: true,
   });
@@ -79,5 +93,9 @@ export const envs = {
     password: envVars.POSTGRES_PASSWORD,
     database: envVars.POSTGRES_DATABASE,
     log: envVars.POSTGRES_LOG,
+  },
+  sonar: {
+    host: envVars.SONAR_HOST,
+    token: envVars.SONAR_TOKEN,
   },
 };
